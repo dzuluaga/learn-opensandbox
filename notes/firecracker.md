@@ -2,6 +2,13 @@
 
 Goal: see how microVM sandboxes work (what OpenSandbox's Fast Sandbox builds on), without Kubernetes.
 
+> **No OpenSandbox on this page.** Everything here is plain Firecracker, driven by the shell scripts in
+> [`firecracker/`](../firecracker) inside a Lima VM: no OpenSandbox server, SDK, `execd`, egress policy or
+> Credential Vault. The scripts do those jobs by hand (boot and snapshot API calls, SSH, NAT on `tap0`).
+> OpenSandbox and Fast Sandbox are mentioned only for comparison. All the OpenSandbox runs in this repo
+> (`examples/*.py`) used the Docker runtime. Fast Sandbox would combine the two: OpenSandbox's API on
+> Firecracker microVMs.
+
 ## Setup
 
 Firecracker needs Linux with KVM (`/dev/kvm`); macOS has neither. [Lima](https://lima-vm.io) (CNCF) runs a
