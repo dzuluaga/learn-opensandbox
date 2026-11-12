@@ -1,0 +1,93 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="490" viewBox="0 0 960 490" role="img" aria-label="Functions share a stateless pool; each agent sandbox is dedicated to one session and stores durable state outside">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="#5a6577"/>
+        </marker>
+      </defs>
+      <rect width="960" height="490" fill="#ffffff"/>
+      <g font-family="IBM Plex Sans, -apple-system, Segoe UI, Helvetica, Arial, sans-serif" font-size="13">
+        
+        <text x="240" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#1b2230">Function: request/response</text>
+        <rect x="40" y="56" width="110" height="34" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="95" y="78" text-anchor="middle" fill="#1b2230">User A</text>
+        <rect x="185" y="56" width="110" height="34" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="240" y="78" text-anchor="middle" fill="#1b2230">User B</text>
+        <rect x="330" y="56" width="110" height="34" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="385" y="78" text-anchor="middle" fill="#1b2230">User C</text>
+        <g stroke="#5a6577" stroke-width="1.25" fill="none">
+          <path d="M95 90V118" marker-end="url(#arr)"/>
+          <path d="M240 90V118" marker-end="url(#arr)"/>
+          <path d="M385 90V118" marker-end="url(#arr)"/>
+        </g>
+        <rect x="40" y="120" width="400" height="34" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="240" y="142" text-anchor="middle" fill="#1b2230">Load balancer: any request to any worker</text>
+        <path d="M240 154V182" stroke="#5a6577" stroke-width="1.25" marker-end="url(#arr)"/>
+        <rect x="40" y="184" width="400" height="140" rx="8" fill="#fbf1de" stroke="#b7791f" stroke-width="2"/>
+        <text x="240" y="206" text-anchor="middle" font-weight="600" fill="#1b2230">Shared pool of identical workers</text>
+        <g>
+          <rect x="56" y="220" width="80" height="54" rx="6" fill="#ffffff" stroke="#c9d0db"/>
+          <rect x="152" y="220" width="80" height="54" rx="6" fill="#ffffff" stroke="#c9d0db"/>
+          <rect x="248" y="220" width="80" height="54" rx="6" fill="#ffffff" stroke="#c9d0db"/>
+          <rect x="344" y="220" width="80" height="54" rx="6" fill="#ffffff" stroke="#c9d0db"/>
+        </g>
+        <text x="96" y="243" text-anchor="middle" fill="#1b2230">worker</text>
+        <text x="96" y="261" text-anchor="middle" font-size="11.5" fill="#5a6577">stateless</text>
+        <text x="192" y="243" text-anchor="middle" fill="#1b2230">worker</text>
+        <text x="192" y="261" text-anchor="middle" font-size="11.5" fill="#5a6577">stateless</text>
+        <text x="288" y="243" text-anchor="middle" fill="#1b2230">worker</text>
+        <text x="288" y="261" text-anchor="middle" font-size="11.5" fill="#5a6577">stateless</text>
+        <text x="384" y="243" text-anchor="middle" fill="#1b2230">worker</text>
+        <text x="384" y="261" text-anchor="middle" font-size="11.5" fill="#5a6577">stateless</text>
+        <text x="240" y="304" text-anchor="middle" font-size="12" fill="#1b2230">serves one request, then forgets it</text>
+        <path d="M240 324V352" stroke="#5a6577" stroke-width="1.25" marker-end="url(#arr)"/>
+        <rect x="40" y="354" width="400" height="48" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="240" y="374" text-anchor="middle" font-weight="600" fill="#1b2230">All state lives outside</text>
+        <text x="240" y="392" text-anchor="middle" font-size="11.5" fill="#5a6577">database, cache, object store</text>
+        <text x="240" y="434" text-anchor="middle" font-size="12.5" fill="#1b2230">Lifetime: one request, milliseconds to seconds</text>
+        <text x="240" y="453" text-anchor="middle" font-size="12" fill="#5a6577">Shared by everyone; scales by adding workers</text>
+        <text x="240" y="472" text-anchor="middle" font-size="12" fill="#5a6577">Example: AWS Lambda (on Firecracker)</text>
+
+        
+        <line x1="480" y1="20" x2="480" y2="476" stroke="#c9d0db" stroke-dasharray="4 4"/>
+
+        
+        <text x="720" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="#1b2230">Agent sandbox: one per session</text>
+        <rect x="520" y="56" width="190" height="34" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="615" y="78" text-anchor="middle" fill="#1b2230">User A, conversation 1</text>
+        <rect x="730" y="56" width="190" height="34" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="825" y="78" text-anchor="middle" fill="#1b2230">User B, conversation 7</text>
+        <g stroke="#5a6577" stroke-width="1.25" fill="none">
+          <path d="M615 90V118" marker-end="url(#arr)"/>
+          <path d="M825 90V118" marker-end="url(#arr)"/>
+        </g>
+        <rect x="520" y="120" width="190" height="168" rx="8" fill="#e3f3ea" stroke="#2f855a" stroke-width="2"/>
+        <text x="615" y="144" text-anchor="middle" font-weight="600" fill="#1b2230">Sandbox A (only A)</text>
+        <text x="536" y="174" font-size="12.5" fill="#1b2230">files and repo</text>
+        <text x="536" y="196" font-size="12.5" fill="#1b2230">installed tools</text>
+        <text x="536" y="218" font-size="12.5" fill="#1b2230">running processes</text>
+        <text x="536" y="240" font-size="12.5" fill="#1b2230">agent session (Claude)</text>
+        <text x="536" y="270" font-size="11.5" fill="#5a6577">kept across many calls</text>
+        <rect x="730" y="120" width="190" height="168" rx="8" fill="#e3f3ea" stroke="#2f855a" stroke-width="2"/>
+        <text x="825" y="144" text-anchor="middle" font-weight="600" fill="#1b2230">Sandbox B (only B)</text>
+        <text x="746" y="174" font-size="12.5" fill="#1b2230">files and repo</text>
+        <text x="746" y="196" font-size="12.5" fill="#1b2230">installed tools</text>
+        <text x="746" y="218" font-size="12.5" fill="#1b2230">running processes</text>
+        <text x="746" y="240" font-size="12.5" fill="#1b2230">agent session (Claude)</text>
+        <text x="746" y="270" font-size="11.5" fill="#5a6577">kept across many calls</text>
+        <g stroke="#5a6577" stroke-width="1.25" fill="none">
+          <path d="M615 288V316" marker-end="url(#arr)"/>
+          <path d="M825 288V316" marker-end="url(#arr)"/>
+        </g>
+        <rect x="520" y="318" width="400" height="88" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="720" y="338" text-anchor="middle" font-weight="600" fill="#1b2230">Outside the sandbox: survives kill and restarts</text>
+        <rect x="532" y="348" width="184" height="48" rx="6" fill="#e7ecfd" stroke="#3b5bdb"/>
+        <text x="624" y="368" text-anchor="middle" font-size="12.5" fill="#1b2230">Volume, git, object store</text>
+        <text x="624" y="386" text-anchor="middle" font-size="11.5" fill="#5a6577">files, conversation history</text>
+        <rect x="724" y="348" width="184" height="48" rx="6" fill="#e7ecfd" stroke="#3b5bdb"/>
+        <text x="816" y="368" text-anchor="middle" font-size="12.5" fill="#1b2230">Snapshot store</text>
+        <text x="816" y="386" text-anchor="middle" font-size="11.5" fill="#5a6577">memory + disk, on pause</text>
+        <text x="720" y="434" text-anchor="middle" font-size="12.5" fill="#1b2230">Lifetime: a task or conversation, minutes to hours</text>
+        <text x="720" y="453" text-anchor="middle" font-size="12" fill="#5a6577">Dedicated to one session; scales by adding sandboxes</text>
+        <text x="720" y="472" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="#5a6577">create → work → pause ⇄ resume → kill</text>
+      </g>
+    </svg>

@@ -1,0 +1,147 @@
+<title>Containers vs microVMs</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one centered column; a wide two-stack diagram (scrolls on phones), then a compact comparison table. */
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --fg: #1b2230; --muted: #5a6577; --line: #c9d0db;
+    --shared: #b7791f; --shared-tint: #fbf1de; --own: #2f855a; --own-tint: #e3f3ea; --api: #3b5bdb; --api-tint: #e7ecfd;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #10141b; --panel: #171c25; --fg: #e6eaf1; --muted: #9aa5b6; --line: #333c4b;
+    --shared: #e0a84a; --shared-tint: #33281a; --own: #5fc48c; --own-tint: #17301f; --api: #8ea6ff; --api-tint: #1d2645; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #10141b; --panel: #171c25; --fg: #e6eaf1; --muted: #9aa5b6; --line: #333c4b;
+    --shared: #e0a84a; --shared-tint: #33281a; --own: #5fc48c; --own-tint: #17301f; --api: #8ea6ff; --api-tint: #1d2645; color-scheme: dark }
+
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+  main { max-width: 1000px; margin: 0 auto; padding-block: 32px 48px;
+         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+         display: grid; gap: 24px; }
+  h1 { font-size: 26px; font-weight: 600; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+  .lead { margin: 6px 0 0; color: var(--muted); max-width: 66ch; }
+  .figure { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; }
+  .figure svg { display: block; width: 100%; min-width: 720px; height: auto; }
+  .note { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+  .tablewrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-size: 14px; min-width: 560px; }
+  th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  thead th { font-size: 12px; letter-spacing: 0.06em; text-transform: uppercase; color: var(--muted); font-weight: 500; }
+  tbody th { font-weight: 500; width: 22%; }
+  td.num, .mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-size: 13px; }
+  .tag { display: inline-block; width: 10px; height: 10px; border-radius: 2px; margin-right: 6px; vertical-align: -1px; }
+  .tag.shared { background: var(--shared); } .tag.own { background: var(--own); }
+  footer { font-size: 13px; color: var(--muted); }
+  a { color: var(--api); }
+</style>
+
+<main>
+  <header>
+    <h1>Containers vs microVMs</h1>
+    <p class="lead">Both stacks ran on this Mac on Nov 11, 2026. The difference is the kernel: every Docker sandbox shares one, and every Firecracker microVM brings its own.</p>
+  </header>
+
+  <section class="figure" aria-label="Diagram comparing the Docker and Firecracker stacks">
+    <svg viewBox="0 0 960 470" role="img" aria-label="Docker sandboxes share one kernel; Firecracker microVMs each have their own kernel">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+        </marker>
+      </defs>
+      <g font-family="IBM Plex Sans, system-ui, sans-serif">
+        <!-- shared API -->
+        <rect x="20" y="16" width="920" height="42" rx="8" fill="var(--api-tint)" stroke="var(--api)" stroke-width="1.5"/>
+        <text x="480" y="42" text-anchor="middle" font-size="15" font-weight="600" fill="var(--fg)">Same OpenSandbox API · SDKs, osb CLI, MCP</text>
+        <path d="M245 58V82" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#arr)"/>
+        <path d="M715 58V82" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#arr)"/>
+
+        <!-- column titles -->
+        <text x="245" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="var(--fg)">Docker runtime (local)</text>
+        <text x="715" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="var(--fg)">Firecracker (Fast Sandbox)</text>
+
+        <!-- LEFT: containers -->
+        <g font-size="13">
+          <rect x="30" y="118" width="134" height="66" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="97" y="145" text-anchor="middle" font-weight="600" fill="var(--fg)">Sandbox</text>
+          <text x="97" y="165" text-anchor="middle" font-size="11.5" fill="var(--muted)">Claude Code, Ubuntu</text>
+          <rect x="178" y="118" width="134" height="66" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="245" y="145" text-anchor="middle" font-weight="600" fill="var(--fg)">Egress sidecar</text>
+          <text x="245" y="165" text-anchor="middle" font-size="11.5" fill="var(--muted)">Credential Vault</text>
+          <rect x="326" y="118" width="134" height="66" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="393" y="145" text-anchor="middle" font-weight="600" fill="var(--fg)">Sandbox</text>
+          <text x="393" y="165" text-anchor="middle" font-size="11.5" fill="var(--muted)">another agent</text>
+          <text x="245" y="204" text-anchor="middle" font-size="11.5" fill="var(--muted)">containers: own userspace only</text>
+        </g>
+        <rect x="30" y="214" width="430" height="50" rx="8" fill="var(--shared-tint)" stroke="var(--shared)" stroke-width="2"/>
+        <text x="245" y="236" text-anchor="middle" font-size="14" font-weight="600" fill="var(--fg)">ONE shared kernel</text>
+        <text x="245" y="254" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="var(--fg)">6.10.14-linuxkit</text>
+        <rect x="30" y="278" width="430" height="42" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="245" y="304" text-anchor="middle" font-size="13" fill="var(--fg)">Docker Desktop VM (LinuxKit)</text>
+        <rect x="30" y="334" width="430" height="42" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="245" y="360" text-anchor="middle" font-size="13" fill="var(--fg)">macOS · Apple M4 Pro</text>
+        <text x="245" y="402" text-anchor="middle" font-size="12.5" fill="var(--fg)">Boundary: namespaces + cgroups</text>
+        <text x="245" y="421" text-anchor="middle" font-size="12" fill="var(--muted)">A kernel exploit in one sandbox reaches all of them.</text>
+
+        <!-- divider -->
+        <line x1="480" y1="92" x2="480" y2="430" stroke="var(--line)" stroke-dasharray="4 4"/>
+
+        <!-- RIGHT: microVMs -->
+        <g font-size="13">
+          <rect x="500" y="118" width="134" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="567" y="142" text-anchor="middle" font-weight="600" fill="var(--fg)">microVM</text>
+          <text x="567" y="161" text-anchor="middle" font-size="11.5" fill="var(--muted)">Ubuntu 24.04</text>
+          <rect x="508" y="172" width="118" height="34" rx="6" fill="var(--own-tint)" stroke="var(--own)" stroke-width="1.5"/>
+          <text x="567" y="186" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--fg)">own kernel</text>
+          <text x="567" y="200" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="var(--fg)">6.1.155</text>
+
+          <rect x="648" y="118" width="134" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="715" y="142" text-anchor="middle" font-weight="600" fill="var(--fg)">microVM</text>
+          <text x="715" y="161" text-anchor="middle" font-size="11.5" fill="var(--muted)">another agent</text>
+          <rect x="656" y="172" width="118" height="34" rx="6" fill="var(--own-tint)" stroke="var(--own)" stroke-width="1.5"/>
+          <text x="715" y="193" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--fg)">own kernel</text>
+
+          <rect x="796" y="118" width="134" height="96" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+          <text x="863" y="142" text-anchor="middle" font-weight="600" fill="var(--fg)">microVM</text>
+          <text x="863" y="161" text-anchor="middle" font-size="11.5" fill="var(--muted)">another agent</text>
+          <rect x="804" y="172" width="118" height="34" rx="6" fill="var(--own-tint)" stroke="var(--own)" stroke-width="1.5"/>
+          <text x="863" y="193" text-anchor="middle" font-size="11.5" font-weight="600" fill="var(--fg)">own kernel</text>
+        </g>
+        <rect x="500" y="228" width="430" height="36" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="715" y="251" text-anchor="middle" font-size="13" fill="var(--fg)">one firecracker process each · ~112 MB · KVM</text>
+        <rect x="500" y="278" width="430" height="42" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="715" y="297" text-anchor="middle" font-size="13" fill="var(--fg)">Lima Ubuntu VM · kernel 6.8 · /dev/kvm</text>
+        <text x="715" y="313" text-anchor="middle" font-size="11.5" fill="var(--muted)">only needed on a Mac; production is bare-metal Linux</text>
+        <rect x="500" y="334" width="430" height="42" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="715" y="360" text-anchor="middle" font-size="13" fill="var(--fg)">macOS · Apple M4 Pro</text>
+        <text x="715" y="402" text-anchor="middle" font-size="12.5" fill="var(--fg)">Boundary: hardware virtualization</text>
+        <text x="715" y="421" text-anchor="middle" font-size="12" fill="var(--muted)">An exploit stays inside one microVM's kernel.</text>
+
+        <!-- legend -->
+        <rect x="300" y="444" width="12" height="12" rx="2" fill="var(--shared)"/>
+        <text x="318" y="455" font-size="12" fill="var(--muted)">kernel shared by all sandboxes</text>
+        <rect x="520" y="444" width="12" height="12" rx="2" fill="var(--own)"/>
+        <text x="538" y="455" font-size="12" fill="var(--muted)">kernel owned by one sandbox</text>
+      </g>
+    </svg>
+    <p class="note">Kernel versions are the ones each sandbox reported when we ran it. On phones, scroll the diagram sideways.</p>
+  </section>
+
+  <section class="tablewrap" aria-label="Comparison">
+    <table>
+      <thead><tr><th></th><th><span class="tag shared"></span>Docker sandbox</th><th><span class="tag own"></span>Firecracker microVM</th></tr></thead>
+      <tbody>
+        <tr><th>Kernel</th><td>Shared with the host VM</td><td>Its own, per sandbox</td></tr>
+        <tr><th>Isolation</th><td>Namespaces and cgroups</td><td>Hardware virtualization (KVM)</td></tr>
+        <tr><th>Start time</th><td>Felt instant in our runs (not measured)</td><td class="num">Cold: kernel 1.8 s, SSH 11.8 s (nested on Mac)<br>Fast Sandbox create, template-backed: 64 ms P50</td></tr>
+        <tr><th>Packaging</th><td>OCI images, Dockerfile, registry</td><td>Kernel plus a root disk image (templates)</td></tr>
+        <tr><th>Runs on a Mac</th><td>Yes, through Docker Desktop</td><td>Only nested in a Linux VM such as Lima</td></tr>
+        <tr><th>Best for</th><td>Local development and demos</td><td>Many untrusted agents on Linux servers</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <footer>The 64 ms figure is OpenSandbox's published Fast Sandbox P50 (serial create). Notes and scripts: <a href="https://github.com/dzuluaga/learn-opensandbox">github.com/dzuluaga/learn-opensandbox</a>.</footer>
+</main>

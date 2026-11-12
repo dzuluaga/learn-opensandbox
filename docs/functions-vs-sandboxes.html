@@ -1,0 +1,152 @@
+<title>Functions vs Agent Sandboxes</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  /* Layout: one centered column; a wide two-panel diagram (scrolls on phones), then two short answers. */
+  :root {
+    --bg: #f6f7f9; --panel: #ffffff; --fg: #1b2230; --muted: #5a6577; --line: #c9d0db;
+    --shared: #b7791f; --shared-tint: #fbf1de; --own: #2f855a; --own-tint: #e3f3ea; --api: #3b5bdb; --api-tint: #e7ecfd;
+    --font-body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+    --bg: #10141b; --panel: #171c25; --fg: #e6eaf1; --muted: #9aa5b6; --line: #333c4b;
+    --shared: #e0a84a; --shared-tint: #33281a; --own: #5fc48c; --own-tint: #17301f; --api: #8ea6ff; --api-tint: #1d2645; color-scheme: dark } }
+  :root[data-theme="dark"] {
+    --bg: #10141b; --panel: #171c25; --fg: #e6eaf1; --muted: #9aa5b6; --line: #333c4b;
+    --shared: #e0a84a; --shared-tint: #33281a; --own: #5fc48c; --own-tint: #17301f; --api: #8ea6ff; --api-tint: #1d2645; color-scheme: dark }
+
+  body { background: var(--bg); color: var(--fg); font-family: var(--font-body); font-size: 15px; line-height: 1.55; }
+  main { max-width: 1000px; margin: 0 auto; padding-block: 32px 48px;
+         padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px));
+         display: grid; gap: 24px; }
+  h1 { font-size: 26px; font-weight: 600; margin: 0; text-wrap: balance; letter-spacing: -0.01em; }
+  h2 { font-size: 16px; font-weight: 600; margin: 0 0 4px; }
+  .lead { margin: 6px 0 0; color: var(--muted); max-width: 66ch; }
+  .figure { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 16px; overflow-x: auto; }
+  .figure svg { display: block; width: 100%; min-width: 720px; height: auto; }
+  .note { margin: 10px 0 0; font-size: 13px; color: var(--muted); }
+  .answers { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+  .answers > div { min-width: 0; }
+  .answers p { margin: 0; max-width: 62ch; }
+  code { font-family: var(--font-mono); font-size: 13px; }
+  footer { font-size: 13px; color: var(--muted); }
+  a { color: var(--api); }
+</style>
+
+<main>
+  <header>
+    <h1>Functions vs Agent Sandboxes</h1>
+    <p class="lead">A function serves anyone's request from a shared pool and forgets it. An agent sandbox belongs to one user's conversation, keeps its working state while it lives, and puts anything that must last somewhere outside.</p>
+  </header>
+
+  <section class="figure" aria-label="Diagram contrasting request/response functions with per-session sandboxes">
+    <svg viewBox="0 0 960 490" role="img" aria-label="Functions share a stateless pool; each agent sandbox is dedicated to one session and stores durable state outside">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="var(--muted)"/>
+        </marker>
+      </defs>
+      <g font-family="IBM Plex Sans, system-ui, sans-serif" font-size="13">
+        <!-- LEFT: functions -->
+        <text x="240" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="var(--fg)">Function: request/response</text>
+        <rect x="40" y="56" width="110" height="34" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="95" y="78" text-anchor="middle" fill="var(--fg)">User A</text>
+        <rect x="185" y="56" width="110" height="34" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="240" y="78" text-anchor="middle" fill="var(--fg)">User B</text>
+        <rect x="330" y="56" width="110" height="34" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="385" y="78" text-anchor="middle" fill="var(--fg)">User C</text>
+        <g stroke="var(--muted)" stroke-width="1.25" fill="none">
+          <path d="M95 90V118" marker-end="url(#arr)"/>
+          <path d="M240 90V118" marker-end="url(#arr)"/>
+          <path d="M385 90V118" marker-end="url(#arr)"/>
+        </g>
+        <rect x="40" y="120" width="400" height="34" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="240" y="142" text-anchor="middle" fill="var(--fg)">Load balancer: any request to any worker</text>
+        <path d="M240 154V182" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#arr)"/>
+        <rect x="40" y="184" width="400" height="140" rx="8" fill="var(--shared-tint)" stroke="var(--shared)" stroke-width="2"/>
+        <text x="240" y="206" text-anchor="middle" font-weight="600" fill="var(--fg)">Shared pool of identical workers</text>
+        <g>
+          <rect x="56" y="220" width="80" height="54" rx="6" fill="var(--panel)" stroke="var(--line)"/>
+          <rect x="152" y="220" width="80" height="54" rx="6" fill="var(--panel)" stroke="var(--line)"/>
+          <rect x="248" y="220" width="80" height="54" rx="6" fill="var(--panel)" stroke="var(--line)"/>
+          <rect x="344" y="220" width="80" height="54" rx="6" fill="var(--panel)" stroke="var(--line)"/>
+        </g>
+        <text x="96" y="243" text-anchor="middle" fill="var(--fg)">worker</text>
+        <text x="96" y="261" text-anchor="middle" font-size="11.5" fill="var(--muted)">stateless</text>
+        <text x="192" y="243" text-anchor="middle" fill="var(--fg)">worker</text>
+        <text x="192" y="261" text-anchor="middle" font-size="11.5" fill="var(--muted)">stateless</text>
+        <text x="288" y="243" text-anchor="middle" fill="var(--fg)">worker</text>
+        <text x="288" y="261" text-anchor="middle" font-size="11.5" fill="var(--muted)">stateless</text>
+        <text x="384" y="243" text-anchor="middle" fill="var(--fg)">worker</text>
+        <text x="384" y="261" text-anchor="middle" font-size="11.5" fill="var(--muted)">stateless</text>
+        <text x="240" y="304" text-anchor="middle" font-size="12" fill="var(--fg)">serves one request, then forgets it</text>
+        <path d="M240 324V352" stroke="var(--muted)" stroke-width="1.25" marker-end="url(#arr)"/>
+        <rect x="40" y="354" width="400" height="48" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="240" y="374" text-anchor="middle" font-weight="600" fill="var(--fg)">All state lives outside</text>
+        <text x="240" y="392" text-anchor="middle" font-size="11.5" fill="var(--muted)">database, cache, object store</text>
+        <text x="240" y="434" text-anchor="middle" font-size="12.5" fill="var(--fg)">Lifetime: one request, milliseconds to seconds</text>
+        <text x="240" y="453" text-anchor="middle" font-size="12" fill="var(--muted)">Shared by everyone; scales by adding workers</text>
+        <text x="240" y="472" text-anchor="middle" font-size="12" fill="var(--muted)">Example: AWS Lambda (on Firecracker)</text>
+
+        <!-- divider -->
+        <line x1="480" y1="20" x2="480" y2="476" stroke="var(--line)" stroke-dasharray="4 4"/>
+
+        <!-- RIGHT: sandboxes -->
+        <text x="720" y="34" text-anchor="middle" font-size="15" font-weight="600" fill="var(--fg)">Agent sandbox: one per session</text>
+        <rect x="520" y="56" width="190" height="34" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="615" y="78" text-anchor="middle" fill="var(--fg)">User A, conversation 1</text>
+        <rect x="730" y="56" width="190" height="34" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="825" y="78" text-anchor="middle" fill="var(--fg)">User B, conversation 7</text>
+        <g stroke="var(--muted)" stroke-width="1.25" fill="none">
+          <path d="M615 90V118" marker-end="url(#arr)"/>
+          <path d="M825 90V118" marker-end="url(#arr)"/>
+        </g>
+        <rect x="520" y="120" width="190" height="168" rx="8" fill="var(--own-tint)" stroke="var(--own)" stroke-width="2"/>
+        <text x="615" y="144" text-anchor="middle" font-weight="600" fill="var(--fg)">Sandbox A (only A)</text>
+        <text x="536" y="174" font-size="12.5" fill="var(--fg)">files and repo</text>
+        <text x="536" y="196" font-size="12.5" fill="var(--fg)">installed tools</text>
+        <text x="536" y="218" font-size="12.5" fill="var(--fg)">running processes</text>
+        <text x="536" y="240" font-size="12.5" fill="var(--fg)">agent session (Claude)</text>
+        <text x="536" y="270" font-size="11.5" fill="var(--muted)">kept across many calls</text>
+        <rect x="730" y="120" width="190" height="168" rx="8" fill="var(--own-tint)" stroke="var(--own)" stroke-width="2"/>
+        <text x="825" y="144" text-anchor="middle" font-weight="600" fill="var(--fg)">Sandbox B (only B)</text>
+        <text x="746" y="174" font-size="12.5" fill="var(--fg)">files and repo</text>
+        <text x="746" y="196" font-size="12.5" fill="var(--fg)">installed tools</text>
+        <text x="746" y="218" font-size="12.5" fill="var(--fg)">running processes</text>
+        <text x="746" y="240" font-size="12.5" fill="var(--fg)">agent session (Claude)</text>
+        <text x="746" y="270" font-size="11.5" fill="var(--muted)">kept across many calls</text>
+        <g stroke="var(--muted)" stroke-width="1.25" fill="none">
+          <path d="M615 288V316" marker-end="url(#arr)"/>
+          <path d="M825 288V316" marker-end="url(#arr)"/>
+        </g>
+        <rect x="520" y="318" width="400" height="88" rx="8" fill="var(--panel)" stroke="var(--line)"/>
+        <text x="720" y="338" text-anchor="middle" font-weight="600" fill="var(--fg)">Outside the sandbox: survives kill and restarts</text>
+        <rect x="532" y="348" width="184" height="48" rx="6" fill="var(--api-tint)" stroke="var(--api)"/>
+        <text x="624" y="368" text-anchor="middle" font-size="12.5" fill="var(--fg)">Volume, git, object store</text>
+        <text x="624" y="386" text-anchor="middle" font-size="11.5" fill="var(--muted)">files, conversation history</text>
+        <rect x="724" y="348" width="184" height="48" rx="6" fill="var(--api-tint)" stroke="var(--api)"/>
+        <text x="816" y="368" text-anchor="middle" font-size="12.5" fill="var(--fg)">Snapshot store</text>
+        <text x="816" y="386" text-anchor="middle" font-size="11.5" fill="var(--muted)">memory + disk, on pause</text>
+        <text x="720" y="434" text-anchor="middle" font-size="12.5" fill="var(--fg)">Lifetime: a task or conversation, minutes to hours</text>
+        <text x="720" y="453" text-anchor="middle" font-size="12" fill="var(--muted)">Dedicated to one session; scales by adding sandboxes</text>
+        <text x="720" y="472" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="var(--muted)">create → work → pause ⇄ resume → kill</text>
+      </g>
+    </svg>
+    <p class="note">Same isolation technology on both sides (Firecracker runs Lambda and OpenSandbox's Fast Sandbox); the difference is who owns the machine and how long it lives. On phones, scroll the diagram sideways.</p>
+  </section>
+
+  <section class="answers">
+    <div>
+      <h2>Dedicated, not pooled</h2>
+      <p>A sandbox serves one user's session for its whole life. Warm pools exist to make creation fast, but once a session claims a sandbox it is that session's alone. Function workers are interchangeable and shared across everyone's requests.</p>
+    </div>
+    <div>
+      <h2>What must last goes outside</h2>
+      <p>Pause/resume snapshots memory and disk, so a planned pause is covered. Anything that must survive a crash or a <code>kill</code>, like files or conversation history, belongs on a volume, in git or an object store. Credential Vault is held in memory: after a Kubernetes pause/resume it starts empty and is re-created.</p>
+    </div>
+  </section>
+
+  <footer>Based on OpenSandbox docs and OSEPs 0003, 0005, 0008, 0021, 0024. Notes: <a href="https://github.com/dzuluaga/learn-opensandbox">github.com/dzuluaga/learn-opensandbox</a>.</footer>
+</main>

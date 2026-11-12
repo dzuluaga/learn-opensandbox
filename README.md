@@ -7,6 +7,8 @@ the CAST-SD × CES keynote (UC San Diego, Nov 21, 2026).
 Learned against upstream `e10bebdd3` (2026-11-12) with `opensandbox-server` from `uvx` on macOS (Apple silicon) and
 Docker Desktop.
 
+![Docker sandboxes share one kernel; Firecracker microVMs each have their own](docs/containers-vs-microvms.svg)
+
 ## Contents
 
 | Path | What it is |
@@ -25,8 +27,8 @@ Docker Desktop.
 - [x] Hello world
 - [x] Claude Code inside a sandbox (headless + resume)
 - [x] Credential Vault: agent gets a fake key, egress sidecar injects the real one
-- [ ] Try Firecracker (Fast Sandbox) if it's quick, to understand how microVM sandboxes work. See
-      [notes/learning-path.md](notes/learning-path.md#firecracker) for what it needs.
+- [x] Try Firecracker: microVM booted in a Lima VM, own kernel, one process. See [notes/firecracker.md](notes/firecracker.md); setup in
+      [firecracker/](firecracker/).
 - [ ] Read OSEP-0012 (Credential Vault) and OSEP-0014 (multi-tenancy)
 - [ ] First contribution (starter bug #2660, then identity threads #2621 / #2627)
 
