@@ -51,6 +51,18 @@ A sandbox is a throwaway workstation for one agent's task, not a function that h
   - volumes for data that outlives the sandbox (OSEP-0003)
   - warm pools so new sandboxes start fast (OSEP-0005, OSEP-0021)
 
+![Functions share a stateless pool; each agent sandbox is dedicated to one session](../docs/functions-vs-sandboxes.svg)
+
+Full page: [docs/functions-vs-sandboxes.html](../docs/functions-vs-sandboxes.html).
+
+- **Dedicated, not pooled.** A sandbox serves one user's session for its whole life. Warm pools make creation
+  fast, but a claimed sandbox belongs to that session alone. Function workers are interchangeable and shared.
+- **What must last goes outside.** Pause/resume snapshots memory and disk for a planned pause. Anything that must
+  survive a crash or `kill` (files, conversation history) belongs on a volume, in git or an object store.
+  Credential Vault is in memory: after a Kubernetes pause/resume it starts empty and is re-created.
+- Mental model: a small cloud VM per conversation, but created in ms to seconds, thousands per host,
+  deny-by-default network, no real secrets inside, driven by API (`commands.run`, `files.write`) instead of SSH.
+
 Keynote contrast: AWS Lambda uses Firecracker for stateless request/response functions. Agent sandboxes use the
 same technology for a long, stateful working session that is still safe to throw away.
 
