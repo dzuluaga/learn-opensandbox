@@ -8,6 +8,54 @@
 #
 # Try: "what's a microVM?" (text only), then "what kernel are you on?" (creates the sandbox),
 # then "write /tmp/notes.txt", then "is /tmp/notes.txt still there?" (same sandbox, it is).
+#
+# How it fits together (see notes/agent-tool-sandbox.md, which also has the Firecracker version):
+#
+# Anthropic API (cloud)
+# ┌────────────────────┐
+# │  Claude (model)    │
+# └─────────▲──────────┘
+#           │ 1. messages.create()  ──►  text reply        (no sandbox)
+#           │                       ──►  tool_use: bash    (needs sandbox)
+#           │
+# Your Mac  │
+# ┌─────────┴──────────────────────────────────────────────────────────┐
+# │                                                                    │
+# │  chat_with_sandbox.py  (your app, holds ANTHROPIC_API_KEY)         │
+# │  ┌──────────────────────────────────────────────┐                  │
+# │  │ get_sandbox():  first tool call? create one  │                  │
+# │  │ run_bash(cmd):  sandbox.commands.run(cmd)    │                  │
+# │  └───────┬──────────────────────────────┬───────┘                  │
+# │          │ 2. POST /sandboxes           │ 4. POST /command "cmd"   │
+# │          │    (once per chat)           │    (every tool call)     │
+# │          ▼                              │                          │
+# │  OpenSandbox server  (uvx, :8080)       │                          │
+# │  ┌──────────────────────────┐           │                          │
+# │  │ lifecycle API            │           │                          │
+# │  │ runtime: Docker          │           │                          │
+# │  │   (or Firecracker with   │           │                          │
+# │  │    Fast Sandbox)         │           │                          │
+# │  └───────┬──────────────────┘           │                          │
+# │          │ 3. start container           │                          │
+# │          ▼                              ▼                          │
+# │  ┌─────────────────────────────────────────────────────┐           │
+# │  │ SANDBOX  (container here; microVM with Fast Sandbox)│           │
+# │  │                                                     │           │
+# │  │   execd  ──►  runs cmd: python3 ..., pip, curl      │           │
+# │  │               files:   /tmp/notes.txt (persists     │           │
+# │  │                        for the whole chat)          │           │
+# │  │   egress policy: deny all, allow pypi.org           │           │
+# │  │   no API key inside                                 │           │
+# │  └──────────────────────────┬──────────────────────────┘           │
+# │                             │ 5. stdout / stderr / exit code       │
+# │                             └──────► back to run_bash()            │
+# │                                       └──► 6. tool_result to Claude│
+# └────────────────────────────────────────────────────────────────────┘
+#
+# Text-only turn:  1 → reply.                       Sandbox never created.
+# First tool call: 1 → 2 → 3 → 4 → 5 → 6 → loop.    Sandbox created.
+# Later tool call: 1 → 4 → 5 → 6 → loop.            Same sandbox reused.
+# /quit:           DELETE /sandboxes/{id}           Sandbox killed.
 import os
 import time
 from datetime import timedelta
