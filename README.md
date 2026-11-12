@@ -39,3 +39,7 @@ uvx opensandbox-server
 source ~/.sandbox.env
 uv run --with opensandbox python examples/hello_sandbox.py
 ```
+
+## License
+
+[Apache-2.0](LICENSE), the same license as OpenSandbox.
