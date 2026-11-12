@@ -128,7 +128,30 @@ snapshot load + resume: 21 ms; SSH: 2190 ms (new pid 6193)
 2.1.322 (Claude Code)
 ```
 
-35 s cold boot vs 21 ms restore for a 2 GiB agent-ready VM. Compared with OpenSandbox's Credential Vault
+Full run with the key (2026-11-12):
+
+```text
+== 1. cold boot the agent-ready VM
+cold boot to SSH: 32428 ms
+Claude Code warmed up: 2.1.322 (Claude Code)
+== 2. snapshot the running VM, kill it
+snapshot written in 2845 ms (2.1G of memory)
+== 3. restore into a NEW process
+snapshot load + resume: 25 ms; SSH: 1679 ms (new pid 6423)
+== 4. Claude Code in the restored microVM
+I'm running Linux kernel 6.1.155+ (aarch64) on Ubuntu 24.04.3 LTS. It looks like a VM, probably a Firecracker
+microVM, rather than a container: the hostname is `ubuntu-fc-uvm`, there's no `/.dockerenv`, and PID 1 sits at
+the root cgroup, though `systemd-detect-virt` didn't confirm it.
+claude -p answered in 129478 ms
+```
+
+Claude worked out it was in a VM, likely Firecracker (the Docker run said "container on Docker Desktop").
+
+Open question: why did `claude -p` take 129 s? Candidates: several API round trips for its shell checks, the
+double NAT (microVM → Lima → Mac), or a stalled IPv6/DNS lookup in the guest. First check: time
+`curl https://api.anthropic.com` from inside the microVM.
+
+35 s cold boot vs 21-25 ms restore for a 2 GiB agent-ready VM. Compared with OpenSandbox's Credential Vault
 demo, the key here does enter the VM (in one process's memory); Credential Vault is how you keep it out.
 
 ## Gotchas
