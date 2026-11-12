@@ -30,3 +30,14 @@ Fix: `OPEN_SANDBOX_DOMAIN=127.0.0.1:8080` instead of `localhost:8080`. (Or move 
 
 `examples/claude_in_sandbox.py` here runs headless only (`claude -p --output-format json`), then `--resume`.
 It passes the real API key into the sandbox env; Credential Vault is the way to avoid that.
+
+## 2026-11-11: Claude Code inside a sandbox works
+
+`examples/claude_in_sandbox.py` with `opensandbox/code-interpreter:v1.1.0` from Docker Hub:
+- npm installed Claude Code in the sandbox (the "new major version of npm" notice on stderr is harmless).
+- Headless turn: Claude ran `uname -a` and read `/etc/os-release` itself: Ubuntu 24.04.4 LTS,
+  kernel `6.10.14-linuxkit`, aarch64. It figured out it was in a container on Docker Desktop on Apple silicon.
+- `--resume <session_id>` answered `42`, so session state carries across turns in the same sandbox.
+
+Takeaway: a container sandbox shares the host VM's kernel (here, Docker Desktop's LinuxKit). That's the
+reason microVM sandboxes like Firecracker exist: each sandbox gets its own kernel, a stronger boundary.

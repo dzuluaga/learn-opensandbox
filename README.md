@@ -21,7 +21,7 @@ Docker Desktop.
 
 - [x] Server running locally on Docker, with an API key
 - [x] Hello world
-- [ ] Claude Code inside a sandbox
+- [x] Claude Code inside a sandbox (headless + resume)
 - [ ] Credential Vault: agent gets a fake key, egress sidecar injects the real one
 - [ ] Try Firecracker (Fast Sandbox) if it's quick, to understand how microVM sandboxes work. See
       [notes/learning-path.md](notes/learning-path.md#firecracker) for what it needs.
