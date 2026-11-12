@@ -29,6 +29,7 @@ Docker Desktop.
 - [x] Credential Vault: agent gets a fake key, egress sidecar injects the real one
 - [x] Try Firecracker: microVM booted in a Lima VM, own kernel, one process. See [notes/firecracker.md](notes/firecracker.md); setup in
       [firecracker/](firecracker/).
+- [ ] Write an AAIF blog post about learning OpenSandbox. Outline: [notes/aaif-blogpost.md](notes/aaif-blogpost.md)
 - [ ] Read OSEP-0012 (Credential Vault) and OSEP-0014 (multi-tenancy)
 - [ ] First contribution (starter bug #2660, then identity threads #2621 / #2627)
 
