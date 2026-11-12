@@ -9,8 +9,10 @@ ARCH="$(uname -m)"
 
 sudo apt-get update -qq && sudo apt-get install -y -qq squashfs-tools acl curl wget bc >/dev/null
 
-# Let this user open /dev/kvm.
+# Let this user open /dev/kvm. The ACL alone can drop between Firecracker runs, so also join the kvm
+# group (takes effect on the next `limactl shell` login).
 sudo setfacl -m "u:${USER}:rw" /dev/kvm
+sudo usermod -aG kvm "$USER"
 
 # Firecracker release binary.
 release_url="https://github.com/firecracker-microvm/firecracker/releases"
