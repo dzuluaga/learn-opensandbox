@@ -16,9 +16,12 @@ Docker Desktop.
 | [notes/learning-path.md](notes/learning-path.md) | Architecture tour, what's interesting, the hands-on order |
 | [notes/credential-vault-demo-output.md](notes/credential-vault-demo-output.md) | Recorded output of the Credential Vault demo (keynote backup) |
 | [notes/setup-log.md](notes/setup-log.md) | Problems I hit and how I fixed them |
+| [notes/agent-tool-sandbox.md](notes/agent-tool-sandbox.md) | Where an agent's tools run: diagrams of the chat flow on Docker and on Firecracker |
 | [examples/hello_sandbox.py](examples/hello_sandbox.py) | Create an alpine sandbox, run a command, write and run a script |
 | [examples/claude_in_sandbox.py](examples/claude_in_sandbox.py) | Claude Code running headless inside a sandbox, with session resume |
 | [examples/credential_vault_claude.py](examples/credential_vault_claude.py) | Credential Vault: Claude Code with a fake key; the egress sidecar injects the real one |
+| [examples/agent_tool_in_sandbox.py](examples/agent_tool_in_sandbox.py) | A normal Anthropic SDK agent loop on the host; only its `bash` tool runs in the sandbox |
+| [examples/chat_with_sandbox.py](examples/chat_with_sandbox.py) | Interactive chat: text turns skip the sandbox; it's created on the first tool call and reused for the conversation |
 | [sandbox.env.example](sandbox.env.example) | SDK connection settings (copy to `~/.sandbox.env`) |
 
 ## Progress
@@ -29,6 +32,7 @@ Docker Desktop.
 - [x] Credential Vault: agent gets a fake key, egress sidecar injects the real one
 - [x] Try Firecracker: microVM booted in a Lima VM, own kernel, one process. See [notes/firecracker.md](notes/firecracker.md); setup in
       [firecracker/](firecracker/).
+- [ ] Write an AAIF blog post about learning OpenSandbox. Outline: [notes/aaif-blogpost.md](notes/aaif-blogpost.md)
 - [ ] Read OSEP-0012 (Credential Vault) and OSEP-0014 (multi-tenancy)
 - [ ] First contribution (starter bug #2660, then identity threads #2621 / #2627)
 

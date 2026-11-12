@@ -9,6 +9,9 @@ TAP=tap0 HOST_IP=172.16.0.1 GUEST_IP=172.16.0.2 GUEST_MAC=06:00:AC:10:00:02
 SOCK="$WORK/firecracker.sock"
 SSH=(ssh -q -i id_rsa -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=1 "root@$GUEST_IP")
 
+# The /dev/kvm ACL from setup.sh can reset (device reset, VM restart): grant it every run.
+sudo setfacl -m "u:${USER}:rw" /dev/kvm
+
 # Host side of the microVM's network: a tap device. The CI rootfs derives its IP from the MAC.
 sudo ip link del "$TAP" 2>/dev/null || true
 sudo ip tuntap add dev "$TAP" mode tap user "$USER"
