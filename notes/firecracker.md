@@ -98,6 +98,39 @@ Reproduced on a second run (2026-11-12, same Mac):
 - This is the mechanism behind OpenSandbox pause/resume (OSEP-0008, OSEP-0024) and fast template-backed creates:
   boot once, snapshot, then restore copies instead of booting.
 
+## Claude Code in a microVM (2026-11-12)
+
+A hand-built version of what OpenSandbox's Fast Sandbox does: an agent-ready VM restored from a snapshot.
+
+```bash
+limactl shell fcvm bash "$PWD/firecracker/claude-setup.sh"   # once: 4 GB disk, NAT, Node.js 22, Claude Code
+printf '%s' "$ANTHROPIC_API_KEY" | limactl shell fcvm bash "$PWD/firecracker/claude-run.sh"
+```
+
+- `claude-setup.sh` copies the root disk to a 4 GB `rootfs-claude.ext4`, gives the microVM internet through NAT
+  in the Lima VM, and installs Node.js 22 (official linux-arm64 build, checksum verified) and Claude Code
+  (2.1.322; 1.1 GB of 4 GB used).
+- `claude-run.sh` cold boots it, warms Claude Code up, snapshots the running VM (before any key is in it),
+  kills it, restores into a new process, then runs `claude -p`. The key travels on stdin and lives only in
+  the `claude` process environment: not on disk, not in the snapshot, not on a command line.
+
+Test run without a key (the `claude -p` step skipped):
+
+```text
+== 1. cold boot the agent-ready VM
+cold boot to SSH: 35121 ms
+Claude Code warmed up: 2.1.322 (Claude Code)
+== 2. snapshot the running VM, kill it
+snapshot written in 2570 ms (2.1G of memory)
+== 3. restore into a NEW process
+snapshot load + resume: 21 ms; SSH: 2190 ms (new pid 6193)
+== 4. Claude Code in the restored microVM
+2.1.322 (Claude Code)
+```
+
+35 s cold boot vs 21 ms restore for a 2 GiB agent-ready VM. Compared with OpenSandbox's Credential Vault
+demo, the key here does enter the VM (in one process's memory); Credential Vault is how you keep it out.
+
 ## Gotchas
 
 - Firecracker's CI bucket can lag releases: v1.18.0 had no CI kernel or rootfs yet, so `setup.sh` falls back to
@@ -106,6 +139,7 @@ Reproduced on a second run (2026-11-12, same Mac):
 - `Kvm error: Error creating KVM object: Permission denied`: the `/dev/kvm` ACL from `setfacl` dropped between
   Firecracker runs. Fix: add the user to the `kvm` group (`setup.sh` does it); the scripts also re-grant the ACL.
   `snapshot.sh` now fails fast if Firecracker exits, and shows Firecracker's API error bodies.
+- The Firecracker CI rootfs has no `xz`: use Node's `.tar.gz` build, not `.tar.xz`.
 - `reboot` inside the guest prints "Failed to connect to bus"; harmless, `run.sh` kills Firecracker on exit.
 
 ## Next (optional)
