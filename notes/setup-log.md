@@ -41,3 +41,19 @@ It passes the real API key into the sandbox env; Credential Vault is the way to 
 
 Takeaway: a container sandbox shares the host VM's kernel (here, Docker Desktop's LinuxKit). That's the
 reason microVM sandboxes like Firecracker exist: each sandbox gets its own kernel, a stronger boundary.
+
+## 2026-11-11: Credential Vault demo works
+
+`examples/credential_vault_claude.py` ran end to end: Claude Code answered from a deny-by-default sandbox that only
+had a fake `ANTHROPIC_API_KEY`; the egress sidecar injected the real key. Sandbox containers come up very fast.
+
+Problems on the way:
+- `credentialProxy.enabled requires server [egress].mode = "dns+nft"`, even after editing `~/.sandbox.toml`:
+  the old server process was still running (a second `uvx opensandbox-server` can't bind :8080, so the old
+  one kept answering). Check with `ps -o pid,lstart,command -ax | grep opensandbox-server`; kill the old PIDs
+  and start once.
+- `can't open file .../OpenSandbox/examples/credential_vault_claude.py`: ran from the upstream clone, not this repo.
+- `[MISSING_API_KEY] ... OPEN-SANDBOX-API-KEY header`: new terminal, `~/.sandbox.env` not sourced.
+- Don't pipe the run to `pbcopy`: it hides the step output, and only stderr shows.
+
+`dns+nft` egress works under Docker Desktop on Apple silicon (macOS 26).
