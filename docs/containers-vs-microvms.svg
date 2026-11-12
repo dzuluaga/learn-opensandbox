@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="960" height="470" viewBox="0 0 960 470" role="img" aria-label="Docker sandboxes share one kernel; Firecracker microVMs each have their own kernel">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+          <path d="M0 0L10 5L0 10z" fill="#5a6577"/>
+        </marker>
+      </defs>
+      <rect width="960" height="470" fill="#ffffff"/>
+      <g font-family="IBM Plex Sans, -apple-system, Segoe UI, Helvetica, Arial, sans-serif">
+        
+        <rect x="20" y="16" width="920" height="42" rx="8" fill="#e7ecfd" stroke="#3b5bdb" stroke-width="1.5"/>
+        <text x="480" y="42" text-anchor="middle" font-size="15" font-weight="600" fill="#1b2230">Same OpenSandbox API · SDKs, osb CLI, MCP</text>
+        <path d="M245 58V82" stroke="#5a6577" stroke-width="1.25" marker-end="url(#arr)"/>
+        <path d="M715 58V82" stroke="#5a6577" stroke-width="1.25" marker-end="url(#arr)"/>
+
+        
+        <text x="245" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="#1b2230">Docker runtime (local)</text>
+        <text x="715" y="104" text-anchor="middle" font-size="14" font-weight="600" fill="#1b2230">Firecracker (Fast Sandbox)</text>
+
+        
+        <g font-size="13">
+          <rect x="30" y="118" width="134" height="66" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+          <text x="97" y="145" text-anchor="middle" font-weight="600" fill="#1b2230">Sandbox</text>
+          <text x="97" y="165" text-anchor="middle" font-size="11.5" fill="#5a6577">Claude Code, Ubuntu</text>
+          <rect x="178" y="118" width="134" height="66" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+          <text x="245" y="145" text-anchor="middle" font-weight="600" fill="#1b2230">Egress sidecar</text>
+          <text x="245" y="165" text-anchor="middle" font-size="11.5" fill="#5a6577">Credential Vault</text>
+          <rect x="326" y="118" width="134" height="66" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+          <text x="393" y="145" text-anchor="middle" font-weight="600" fill="#1b2230">Sandbox</text>
+          <text x="393" y="165" text-anchor="middle" font-size="11.5" fill="#5a6577">another agent</text>
+          <text x="245" y="204" text-anchor="middle" font-size="11.5" fill="#5a6577">containers: own userspace only</text>
+        </g>
+        <rect x="30" y="214" width="430" height="50" rx="8" fill="#fbf1de" stroke="#b7791f" stroke-width="2"/>
+        <text x="245" y="236" text-anchor="middle" font-size="14" font-weight="600" fill="#1b2230">ONE shared kernel</text>
+        <text x="245" y="254" text-anchor="middle" font-size="12" font-family="IBM Plex Mono, monospace" fill="#1b2230">6.10.14-linuxkit</text>
+        <rect x="30" y="278" width="430" height="42" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="245" y="304" text-anchor="middle" font-size="13" fill="#1b2230">Docker Desktop VM (LinuxKit)</text>
+        <rect x="30" y="334" width="430" height="42" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="245" y="360" text-anchor="middle" font-size="13" fill="#1b2230">macOS · Apple M4 Pro</text>
+        <text x="245" y="402" text-anchor="middle" font-size="12.5" fill="#1b2230">Boundary: namespaces + cgroups</text>
+        <text x="245" y="421" text-anchor="middle" font-size="12" fill="#5a6577">A kernel exploit in one sandbox reaches all of them.</text>
+
+        
+        <line x1="480" y1="92" x2="480" y2="430" stroke="#c9d0db" stroke-dasharray="4 4"/>
+
+        
+        <g font-size="13">
+          <rect x="500" y="118" width="134" height="96" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+          <text x="567" y="142" text-anchor="middle" font-weight="600" fill="#1b2230">microVM</text>
+          <text x="567" y="161" text-anchor="middle" font-size="11.5" fill="#5a6577">Ubuntu 24.04</text>
+          <rect x="508" y="172" width="118" height="34" rx="6" fill="#e3f3ea" stroke="#2f855a" stroke-width="1.5"/>
+          <text x="567" y="186" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b2230">own kernel</text>
+          <text x="567" y="200" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="#1b2230">6.1.155</text>
+
+          <rect x="648" y="118" width="134" height="96" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+          <text x="715" y="142" text-anchor="middle" font-weight="600" fill="#1b2230">microVM</text>
+          <text x="715" y="161" text-anchor="middle" font-size="11.5" fill="#5a6577">another agent</text>
+          <rect x="656" y="172" width="118" height="34" rx="6" fill="#e3f3ea" stroke="#2f855a" stroke-width="1.5"/>
+          <text x="715" y="193" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b2230">own kernel</text>
+
+          <rect x="796" y="118" width="134" height="96" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+          <text x="863" y="142" text-anchor="middle" font-weight="600" fill="#1b2230">microVM</text>
+          <text x="863" y="161" text-anchor="middle" font-size="11.5" fill="#5a6577">another agent</text>
+          <rect x="804" y="172" width="118" height="34" rx="6" fill="#e3f3ea" stroke="#2f855a" stroke-width="1.5"/>
+          <text x="863" y="193" text-anchor="middle" font-size="11.5" font-weight="600" fill="#1b2230">own kernel</text>
+        </g>
+        <rect x="500" y="228" width="430" height="36" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="715" y="251" text-anchor="middle" font-size="13" fill="#1b2230">one firecracker process each · ~112 MB · KVM</text>
+        <rect x="500" y="278" width="430" height="42" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="715" y="297" text-anchor="middle" font-size="13" fill="#1b2230">Lima Ubuntu VM · kernel 6.8 · /dev/kvm</text>
+        <text x="715" y="313" text-anchor="middle" font-size="11.5" fill="#5a6577">only needed on a Mac; production is bare-metal Linux</text>
+        <rect x="500" y="334" width="430" height="42" rx="8" fill="#ffffff" stroke="#c9d0db"/>
+        <text x="715" y="360" text-anchor="middle" font-size="13" fill="#1b2230">macOS · Apple M4 Pro</text>
+        <text x="715" y="402" text-anchor="middle" font-size="12.5" fill="#1b2230">Boundary: hardware virtualization</text>
+        <text x="715" y="421" text-anchor="middle" font-size="12" fill="#5a6577">An exploit stays inside one microVM's kernel.</text>
+
+        
+        <rect x="300" y="444" width="12" height="12" rx="2" fill="#b7791f"/>
+        <text x="318" y="455" font-size="12" fill="#5a6577">kernel shared by all sandboxes</text>
+        <rect x="520" y="444" width="12" height="12" rx="2" fill="#2f855a"/>
+        <text x="538" y="455" font-size="12" fill="#5a6577">kernel owned by one sandbox</text>
+      </g>
+    </svg>

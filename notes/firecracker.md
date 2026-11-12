@@ -35,6 +35,12 @@ Mem:             483          37         399           2          58         446
    3788 114412      00:12 ./firecracker --api-sock .../fc/firecracker.sock --config-file vm_config.json
 ```
 
+## Containers vs microVMs
+
+![Docker sandboxes share one kernel; Firecracker microVMs each have their own](../docs/containers-vs-microvms.svg)
+
+Full page with the comparison table: [docs/containers-vs-microvms.html](../docs/containers-vs-microvms.html).
+
 ## What I learned
 
 - **Own kernel per sandbox.** The microVM runs kernel 6.1.155 while its host runs 6.8. The Docker sandboxes

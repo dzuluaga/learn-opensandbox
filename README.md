@@ -7,6 +7,8 @@ the CAST-SD × CES keynote (UC San Diego, Nov 21, 2026).
 Learned against upstream `e10bebdd3` (2026-11-12) with `opensandbox-server` from `uvx` on macOS (Apple silicon) and
 Docker Desktop.
 
+![Docker sandboxes share one kernel; Firecracker microVMs each have their own](docs/containers-vs-microvms.svg)
+
 ## Contents
 
 | Path | What it is |
