@@ -1,0 +1,7 @@
+.env
+*.env
+!sandbox.env.example
+.sandbox.toml
+__pycache__/
+.venv/
+.DS_Store
