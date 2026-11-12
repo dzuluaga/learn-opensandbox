@@ -12,6 +12,7 @@ Docker Desktop.
 | Path | What it is |
 | --- | --- |
 | [notes/learning-path.md](notes/learning-path.md) | Architecture tour, what's interesting, the hands-on order |
+| [notes/credential-vault-demo-output.md](notes/credential-vault-demo-output.md) | Recorded output of the Credential Vault demo (keynote backup) |
 | [notes/setup-log.md](notes/setup-log.md) | Problems I hit and how I fixed them |
 | [examples/hello_sandbox.py](examples/hello_sandbox.py) | Create an alpine sandbox, run a command, write and run a script |
 | [examples/claude_in_sandbox.py](examples/claude_in_sandbox.py) | Claude Code running headless inside a sandbox, with session resume |
