@@ -15,6 +15,7 @@ Docker Desktop.
 | [notes/setup-log.md](notes/setup-log.md) | Problems I hit and how I fixed them |
 | [examples/hello_sandbox.py](examples/hello_sandbox.py) | Create an alpine sandbox, run a command, write and run a script |
 | [examples/claude_in_sandbox.py](examples/claude_in_sandbox.py) | Claude Code running headless inside a sandbox, with session resume |
+| [examples/credential_vault_claude.py](examples/credential_vault_claude.py) | Credential Vault: Claude Code with a fake key; the egress sidecar injects the real one |
 | [sandbox.env.example](sandbox.env.example) | SDK connection settings (copy to `~/.sandbox.env`) |
 
 ## Progress
