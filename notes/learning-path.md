@@ -36,6 +36,24 @@ sandbox (Docker locally, Kubernetes or Firecracker microVMs at scale) behind one
 5. Credential Vault: needs `[egress].mode = "dns+nft"` and a deny-by-default outbound policy. Give the agent a
    fake key and watch the call succeed. This is the demo.
 
+## Lifecycle: disposable, not stateless
+
+A sandbox is a throwaway workstation for one agent's task, not a function that handles one request and dies.
+
+- **Stateful while it lives.** Files, installed tools and processes persist across calls. In
+  `examples/claude_in_sandbox.py`, Claude Code was installed once, ran two turns, and `--resume` remembered "42".
+  An agent works the same way: clone a repo, edit, run tests, edit again, in the same box.
+- **Ephemeral by choice.** The common pattern is one sandbox per task: create, work, `kill`, so nothing leaks
+  into the next task. A timeout ends forgotten sandboxes (server `max_sandbox_timeout_seconds`).
+- **Can live long when needed** (OSEPs in `oseps/`):
+  - renew, including automatically on inbound traffic (OSEP-0009)
+  - pause/resume keeping memory and disk (OSEP-0008), auto-pause and wake-on-access (OSEP-0024)
+  - volumes for data that outlives the sandbox (OSEP-0003)
+  - warm pools so new sandboxes start fast (OSEP-0005, OSEP-0021)
+
+Keynote contrast: AWS Lambda uses Firecracker for stateless request/response functions. Agent sandboxes use the
+same technology for a long, stateful working session that is still safe to throw away.
+
 ## Firecracker
 
 To try if it's quick, to understand how microVM sandboxes work (Fast Sandbox: 64 ms P50 create, pause/resume
