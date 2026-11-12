@@ -77,6 +77,19 @@ written at 06:29:33 before the snapshot
 13.27 0.68
 ```
 
+Reproduced on a second run (2026-11-12, same Mac):
+
+| Measure | Run 1 | Run 2 |
+| --- | --- | --- |
+| `run.sh` cold boot to SSH | 11.80 s | 9.81 s |
+| `run.sh` kernel done (`Freeing unused kernel memory`) | 1.76 s | 1.63 s |
+| `run.sh` firecracker process RSS | 112 MB | 97 MB |
+| `snapshot.sh` cold boot to SSH | 10.65 s | 10.11 s |
+| Snapshot written | 297 ms | 220 ms |
+| **Snapshot load + resume** | **7 ms** | **6 ms** |
+| Restore to SSH reachable | 1.65 s | 1.45 s |
+| `/dev/shm` file and `sleep` PID 261 survived | yes | yes |
+
 - **7 ms to load and resume vs 10.6 s cold boot**, even nested on a Mac. The snapshot is the guest's whole RAM
   (`vm.mem`, 512 MB) plus a small device/vCPU state file (`vm.snap`, 6 KB).
 - **Memory really came back:** the RAM-only file and the same `sleep` PID survived the original process being killed.
